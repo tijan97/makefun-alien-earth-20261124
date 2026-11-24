@@ -5,6 +5,8 @@ Writes one original line of plain text: a review of planet Earth
 left by an alien tourist. Max 200 characters.
 """
 
+import os
+
 ENTRY = (
     "Three stars. The locals worship glowing rectangles, queue daily "
     "for bitter bean water, and applaud when the sky changes colour "
@@ -27,11 +29,19 @@ def validate_entry(text: str) -> None:
         raise ValueError("entry must end with terminal punctuation")
 
 
+def output_dir() -> str:
+    return (
+        os.environ.get("MAKEFUN_OUTPUT_DIR")
+        or os.environ.get("OUTPUT_DIR")
+        or "/output"
+    )
+
+
 def main() -> None:
     validate_entry(ENTRY)
-    import os
-    os.makedirs("out", exist_ok=True)
-    with open("out/entry.txt", "w", encoding="utf-8") as f:
+    out = output_dir()
+    os.makedirs(out, exist_ok=True)
+    with open(os.path.join(out, "entry.txt"), "w", encoding="utf-8") as f:
         f.write(ENTRY)
     print(ENTRY)
     print(f"({len(ENTRY)} chars)")
